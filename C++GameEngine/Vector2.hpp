@@ -10,6 +10,7 @@ struct Vector2
 	T x = 0;
 	T y = 0;
 
+
 	Vector2() = default;
 
 	Vector2(T xin, T yin)

@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <memory>
 #include <fstream>
@@ -7,13 +8,12 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
-#include "TestScreen.h"
-
-int main()
+class TestScreen
 {
-	//TestScreen test;
-	//test.RunTest();
+public:
+	TestScreen() = default;
 
+	void LoadFromFile(const std::string& filepath);
+	void RunTest();
+};
 
-	return 0;
-}
