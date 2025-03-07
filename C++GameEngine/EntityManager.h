@@ -1,5 +1,5 @@
 #pragma once
-#include "Entity.h"
+#include "Entity.hpp"
 #include <map>
 
 using EntityVector = std::vector<std::shared_ptr<Entity>>;
@@ -12,8 +12,8 @@ private:
 	std::map<EntityTag, EntityVector> m_entityTagMap;
 	size_t m_entitiesCreated = 0;
 
-	EntityManager() = default;
 public:
+	EntityManager() = default;
 	void update();
 	std::shared_ptr<Entity> addEntity(EntityTag tag);
 	const EntityVector& getEntities();

@@ -8,12 +8,13 @@
 #include "imgui-SFML.h"
 
 #include "TestScreen.h"
+#include "Game.h"
+
 
 int main()
 {
 	//TestScreen test;
 	//test.RunTest();
-
-
-	return 0;
+	Game game("path");
+	game.run();
 }
