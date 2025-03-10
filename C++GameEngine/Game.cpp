@@ -45,22 +45,32 @@ void Game::run()
 		ImGui::SFML::Update(m_gameWindow, m_deltaClock.restart());
 
 		//loop the systems
-		//m_sInput.update();
+		//update input
 		while (const std::optional event = m_gameWindow.pollEvent())
 		{
 			ImGui::SFML::ProcessEvent(m_gameWindow, *event);
 
+			// if window is closed, exit the game
 			if (event->is<sf::Event::Closed>())
 			{
-				m_gameWindow.close();
+				m_isRunning = false;
 			}
 
+			// before processing input for gameplay, check if escape key was pressed and exit the game
 			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
 			{
-				std::cout << "Key pressed with code = " << static_cast<int>(keyPressed->scancode);
+				if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+				{
+					m_isRunning = false;
+					std::cout << "Exiting game...";
+					return;
+				}
 			}
+
+			// else, pass over the event to the input system
+			m_sInput.update(m_entityManager, *event);
 		}
-		//m_sMovement.update();
+		m_sMovement.update(m_entityManager);
 		//m_sCollision.update();
 		drawImGui();
 		sRender();

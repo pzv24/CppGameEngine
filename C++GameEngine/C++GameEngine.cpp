@@ -17,4 +17,5 @@ int main()
 	//test.RunTest();
 	Game game("path");
 	game.run();
+	return 0;
 }

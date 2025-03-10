@@ -51,6 +51,11 @@ struct Vector2
 	}
 
 	//scaling
+	void operator += (const Vector2& other)
+	{
+		x += other.x;
+		y += other.y;
+	}
 	void operator *= (const T val)
 	{
 		x *= val;

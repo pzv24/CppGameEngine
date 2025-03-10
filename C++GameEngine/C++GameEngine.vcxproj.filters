@@ -45,17 +45,17 @@
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="SMovement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestScreen.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SMovement.cpp">
+      <Filter>Source Files\ECSSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="SInput.cpp">
+      <Filter>Source Files\ECSSystems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

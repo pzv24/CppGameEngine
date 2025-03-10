@@ -9,8 +9,8 @@
 #include "imgui-SFML.h"
 
 #include"EntityManager.h"
-//#include "SInput.h"
-//#include "SMovement.h"
+#include "SInput.h"
+#include "SMovement.h"
 
 class Game
 {
@@ -25,8 +25,8 @@ class Game
 	bool m_isRunning;
 
 	//systems
-	//SInput m_sInput;
-	//SMovement m_sMovement;
+	SInput m_sInput;
+	SMovement m_sMovement;
 
 	void init(const std::string& configPath);
 	void setPaused(bool paused);
