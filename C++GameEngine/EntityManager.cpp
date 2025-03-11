@@ -7,22 +7,23 @@ void EntityManager::update()
 	{
 		m_entities.push_back(e);
 		m_entityTagMap[e->getTag()].push_back(e);
+		std::cout << "Entity count: " << m_entities.size() << "\n There are now " << m_entityTagMap[e->getTag()].size() << " in the " << e->getTagName() << " tag map";
 	}
 
 	//removing inactive entities from lists
-	//m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](std::shared_ptr<Entity> e) { return !e->isActive(); }), m_entities.end())
-	for (auto it = m_entities.begin(); it != m_entities.end();)
-	{
-		if (!(*it)->isActive())
-		{
-			m_entities.erase(it);
-			m_entityTagMap.erase((*it)->getTag());
-		}
-		else
-		{
-			++it;
-		}
-	}
+	m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](std::shared_ptr<Entity> e) { return !e->isActive(); }), m_entities.end());
+	//for (auto it = m_entities.begin(); it != m_entities.end();)
+	//{
+	//	if (!(*it)->isActive())
+	//	{
+	//		m_entities.erase(it);
+	//		m_entityTagMap.erase((*it)->getTag());
+	//	}
+	//	else
+	//	{
+	//		++it;
+	//	}
+	//}
 	//reset the add buffer
 	m_entityAddBuffer.clear();
 }
@@ -40,9 +41,6 @@ std::shared_ptr<Entity> EntityManager::addEntity(EntityTag tag)
 	{
 		m_entityTagMap[tag] = EntityVector();
 	}
-
-	//add entity to tag map
-	m_entityTagMap[tag].push_back(e);
 
 	return e;
 }

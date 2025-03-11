@@ -52,6 +52,18 @@ public:
 	{
 		return m_tag;
 	}
+	const char* getTagName()
+	{
+		switch (m_tag)
+		{
+		case defaultEntity: return "defaultEntity";
+		case player: return "player";
+		case enemy: return "enemy";
+		case projectile: return "projectile";
+		case collidableTerrain: return "collidableTerrain";
+		case decorativeTerrain: return "decorativeTerrain";
+		}
+	}
 
 	template<typename T>
 	bool hasComponent() const

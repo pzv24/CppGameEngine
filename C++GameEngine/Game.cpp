@@ -21,6 +21,7 @@ void Game::init(const std::string& configPath)
 
 void Game::setPaused(bool paused)
 {
+	m_paused = paused;
 }
 
 void Game::spawnPlayer()
@@ -84,12 +85,14 @@ void Game::run()
 			// else, pass over the event to the input system
 			m_sInput.update(m_entityManager, *event);
 		}
-		m_sMovement.update(m_entityManager, m_gameWindow);
-		sDetectCollision();
+		if (!m_paused)
+		{
+			m_sMovement.update(m_entityManager, m_gameWindow);
+			sDetectCollision();
+			m_currentFrame++;
+		}
 		drawImGui();
 		sRender();
-
-		m_currentFrame++;
 	}
 }
 
@@ -119,16 +122,160 @@ void Game::sRender()
 
 void Game::sDetectCollision()
 {
+	for (auto& e : m_entityManager.getEntities(enemy))
+	{
+		if (getPlayer()->getComponent<CTransform>().position.sqrdDistance(e->getComponent<CTransform>().position) <
+			(getPlayer()->getComponent<CCircleCollider>().radius + e->getComponent<CCircleCollider>().radius) *
+			(getPlayer()->getComponent<CCircleCollider>().radius + e->getComponent<CCircleCollider>().radius))
+		{
+			getPlayer()->destroyEntity();
+		}
+	}
 }
 
 void Game::drawImGui()
 {
+
 	ImGui::Begin("GUI");
-	ImGui::Text("Window Text");
-	if (ImGui::Button("Spawn Enemy"))
+	ImGui::ShowDemoWindow();
+	ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+	if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
 	{
-		spawnEnemy();
+		if (ImGui::BeginTabItem("Home"))
+		{
+			if (ImGui::Button("Spawn Enemy"))
+			{
+				spawnEnemy();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Pasue"))
+			{
+				setPaused(!m_paused);
+			}
+
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Entities"))
+		{
+			if (ImGui::CollapsingHeader("All Entities", ImGuiTreeNodeFlags_None))
+			{
+				if (ImGui::BeginTable("table1", 4))
+				{
+					ImGui::TableSetupColumn("DeleteEntity");
+					ImGui::TableSetupColumn("ID");
+					ImGui::TableSetupColumn("Tag");
+					ImGui::TableSetupColumn("Pos");
+					ImGui::TableHeadersRow();
+
+					for (auto& e : m_entityManager.getEntities())
+					{
+						ImGui::TableNextRow();
+
+						ImGui::TableSetColumnIndex(0);
+						ImGui::PushID(e->getId());
+						if (ImGui::Button("DEL"))
+						{
+							e->destroyEntity();
+						}
+						ImGui::PopID();
+
+						ImGui::TableSetColumnIndex(1);
+						ImGui::Text(e->getTagName());
+
+						ImGui::TableSetColumnIndex(2);
+						ImGui::Text("%d", e->getId());
+
+						ImGui::TableSetColumnIndex(3);
+						Vector2<float> vec = e->getComponent<CTransform>().position;
+						ImGui::Text("(%d", static_cast<int>(vec.x)); ImGui::SameLine();
+						ImGui::Text(","); ImGui::SameLine();
+						ImGui::Text("%d)", static_cast<int>(vec.y)); ImGui::SameLine();
+					}
+					ImGui::EndTable();
+				}
+			}
+			if (ImGui::CollapsingHeader("Entities by tag", ImGuiTreeNodeFlags_None))
+			{
+				if (ImGui::CollapsingHeader("enemy", ImGuiTreeNodeFlags_None))
+				{
+					if (ImGui::BeginTable("table2", 4))
+					{
+						ImGui::TableSetupColumn("DeleteEntity");
+						ImGui::TableSetupColumn("ID");
+						ImGui::TableSetupColumn("Tag");
+						ImGui::TableSetupColumn("Pos");
+						ImGui::TableHeadersRow();
+
+						for (auto& e : m_entityManager.getEntities(enemy))
+						{
+							ImGui::TableNextRow();
+
+							ImGui::TableSetColumnIndex(0);
+							ImGui::PushID(e->getId());
+							if (ImGui::Button("DEL"))
+							{
+								e->destroyEntity();
+							}
+							ImGui::PopID();
+
+							ImGui::TableSetColumnIndex(1);
+							ImGui::Text(e->getTagName());
+
+							ImGui::TableSetColumnIndex(2);
+							ImGui::Text("%d", e->getId());
+
+							ImGui::TableSetColumnIndex(3);
+							Vector2<float> vec = e->getComponent<CTransform>().position;
+							ImGui::Text("(%d", static_cast<int>(vec.x)); ImGui::SameLine();
+							ImGui::Text(","); ImGui::SameLine();
+							ImGui::Text("%d)", static_cast<int>(vec.y)); ImGui::SameLine();
+						}
+						ImGui::EndTable();
+					}
+				}
+				if (ImGui::CollapsingHeader("player", ImGuiTreeNodeFlags_None))
+				{
+					if (ImGui::BeginTable("table3", 4))
+					{
+						ImGui::TableSetupColumn("DeleteEntity");
+						ImGui::TableSetupColumn("ID");
+						ImGui::TableSetupColumn("Tag");
+						ImGui::TableSetupColumn("Pos");
+						ImGui::TableHeadersRow();
+
+						for (auto& e : m_entityManager.getEntities(player))
+						{
+							ImGui::TableNextRow();
+
+							ImGui::TableSetColumnIndex(0);
+							ImGui::PushID(e->getId());
+							if (ImGui::Button("DEL"))
+							{
+								e->destroyEntity();
+							}
+							ImGui::PopID();
+
+							ImGui::TableSetColumnIndex(1);
+							ImGui::Text(e->getTagName());
+
+							ImGui::TableSetColumnIndex(2);
+							ImGui::Text("%d", e->getId());
+
+							ImGui::TableSetColumnIndex(3);
+							Vector2<float> vec = e->getComponent<CTransform>().position;
+							ImGui::Text("(%d", static_cast<int>(vec.x)); ImGui::SameLine();
+							ImGui::Text(","); ImGui::SameLine();
+							ImGui::Text("%d)", static_cast<int>(vec.y)); ImGui::SameLine();
+						}
+						ImGui::EndTable();
+					}
+				}
+			}
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
 	}
+	ImGui::Separator();
 	ImGui::End();
 }
 
