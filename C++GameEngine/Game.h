@@ -11,6 +11,7 @@
 #include"EntityManager.h"
 #include "SInput.h"
 #include "SMovement.h"
+#include <math.h>
 
 class Game
 {
@@ -23,6 +24,8 @@ class Game
 	int m_currentFrame = 0;
 	bool m_paused;
 	bool m_isRunning;
+	int m_wWidth = 1280;
+	int m_wHeight = 720;
 
 	//systems
 	SInput m_sInput;
@@ -31,10 +34,14 @@ class Game
 	void init(const std::string& configPath);
 	void setPaused(bool paused);
 	void spawnPlayer();
+	void spawnEnemy();
 
 	std::shared_ptr<Entity> getPlayer();
 	void sRender();
+	void sDetectCollision();
 	void drawImGui();
+	int randomRangeInt(int min, int max);
+	int randomRangeFloat(float min, float max);
 
 public:
 	Game(const std::string& configPath);

@@ -3,6 +3,6 @@
 class SMovement
 {
 public:
-	void update(EntityManager& entityManager);
+	void update(EntityManager& entityManager, sf::RenderWindow& window);
 };
 

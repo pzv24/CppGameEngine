@@ -7,9 +7,7 @@ Game::Game(const std::string& configPath)
 
 void Game::init(const std::string& configPath)
 {
-	const int wWidth = 1280;
-	const int wHeight = 720;
-	m_gameWindow.create(sf::VideoMode({ wWidth, wHeight }), "GameScreen");
+	m_gameWindow.create(sf::VideoMode({ (unsigned)m_wWidth, (unsigned)m_wHeight }), "GameScreen");
 	m_gameWindow.setFramerateLimit(60);
 
 	ImGui::SFML::Init(m_gameWindow);
@@ -17,7 +15,7 @@ void Game::init(const std::string& configPath)
 	ImGui::GetStyle().ScaleAllSizes(1.0f);
 	ImGui::GetIO().FontGlobalScale = 1.0f;
 	m_isRunning = true;
-
+	srand(time(NULL));
 	spawnPlayer();
 }
 
@@ -31,9 +29,25 @@ void Game::spawnPlayer()
 
 	entity->addComponent<CTransform>(Vector2(50.0f, 50.0f), 0.0f, Vector2(1.0f, 1.0f));
 	entity->addComponent<CRigidbody>();
-	entity->addComponent<CCircle>(CCircle(5.0f, 32, sf::Color(120,120,255), sf::Color(255,255,255), 1.0f));
-	entity->addComponent<CCircleCollider>(5.0f);
+	entity->addComponent<CCircle>(CCircle(15.0f, 32, sf::Color(120,50,255), sf::Color(255,255,255), 1.0f));
+	entity->addComponent<CCircleCollider>(15.0f);
 	entity->getComponent<CInput>();
+}
+
+void Game::spawnEnemy()
+{
+	auto entity = m_entityManager.addEntity(enemy);
+	float randomAngle = randomRangeInt(0, 360);
+	randomAngle = randomAngle * 3.141692 / 180;
+	float randomSpeed = randomRangeFloat(3.0f, 25.0f);
+	Vector2<float> randomVel(cos(randomAngle) * randomSpeed, sin(randomAngle) * randomSpeed);
+	Vector2<float> randomPos(randomRangeInt(15, m_wWidth - 15), randomRangeInt(15, m_wHeight - 15));
+	sf::Color randomColor(randomRangeInt(0, 255), randomRangeInt(0, 255), randomRangeInt(0, 255));
+
+	entity->addComponent<CTransform>(randomPos, 0.0f, Vector2(1.0f, 1.0f));
+	entity->addComponent<CRigidbody>().velocity = randomVel;
+	entity->addComponent<CCircle>(CCircle(15.0f, 6, randomColor, sf::Color(255, 255, 255), 1.0f));
+	entity->addComponent<CCircleCollider>(15.0f);
 }
 
 void Game::run()
@@ -70,8 +84,8 @@ void Game::run()
 			// else, pass over the event to the input system
 			m_sInput.update(m_entityManager, *event);
 		}
-		m_sMovement.update(m_entityManager);
-		//m_sCollision.update();
+		m_sMovement.update(m_entityManager, m_gameWindow);
+		sDetectCollision();
 		drawImGui();
 		sRender();
 
@@ -89,18 +103,41 @@ void Game::sRender()
 {
 	m_gameWindow.clear();
 
-	getPlayer()->getComponent<CCircle>().circle.setPosition(getPlayer()->getComponent<CTransform>().position);
-	//getPlayer()->getComponent<CTransform>().rotation += 1;
-	m_gameWindow.draw(getPlayer()->getComponent<CCircle>().circle);
+	for (auto& e : m_entityManager.getEntities())
+	{
+		if (e->hasComponent<CCircle>())
+		{
+			e->getComponent<CCircle>().circle.setPosition(e->getComponent<CTransform>().position);
+			m_gameWindow.draw(e->getComponent<CCircle>().circle);
+		}
+	}
 
 	ImGui::SFML::Render(m_gameWindow);
 
 	m_gameWindow.display();
 }
 
+void Game::sDetectCollision()
+{
+}
+
 void Game::drawImGui()
 {
 	ImGui::Begin("GUI");
 	ImGui::Text("Window Text");
+	if (ImGui::Button("Spawn Enemy"))
+	{
+		spawnEnemy();
+	}
 	ImGui::End();
+}
+
+int Game::randomRangeInt(int min, int max)
+{
+	return min + (rand() % (1 + max - min));
+}
+
+int Game::randomRangeFloat(float min, float max)
+{
+	return  min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
 }
