@@ -45,9 +45,15 @@ struct Vector2
 	{
 		return Vector2(x * val, y * val);
 	}
+
+	//vector operations
 	float magnitude() const
 	{
 		return (float)sqrt((x * x) + (y * y));
+	}
+	float dot(const Vector2& other) const
+	{
+		return (x * other.x + y * other.y);
 	}
 
 	//scaling

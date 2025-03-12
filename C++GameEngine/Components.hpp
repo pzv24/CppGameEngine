@@ -8,6 +8,11 @@ public:
 	bool exists = false;
 };
 
+enum ColliderType
+{
+	circle,
+	boundingBox,
+};
 class CTransform : public Component
 {
 public:
@@ -24,10 +29,12 @@ class CRigidbody : public Component
 {
 public: 
 	Vector2<float> velocity = { 0.0f, 0.0f };
+	float bounceCoef = 0.0f;
+	float mass = 1.0f;
 
 	CRigidbody() = default;
-	CRigidbody(const Vector2<float>& vel)
-		: velocity(vel){}
+	CRigidbody(const Vector2<float>& vel, float bounce, float mass)
+		: velocity(vel), bounceCoef(bounce), mass(mass){}
 
 	float Speed() { return velocity.magnitude(); }
 };
@@ -49,7 +56,15 @@ public:
 	}
 };
 
-class CCircleCollider : public Component
+
+
+class CCollider : public Component
+{
+public:
+	virtual ColliderType getType() = 0;
+};
+
+class CCircleCollider : public CCollider
 {
 public:
 	float radius = 0;
@@ -57,6 +72,25 @@ public:
 	CCircleCollider() = default;
 	CCircleCollider(float r)
 		:radius(r){}
+
+	// Inherited via CCollider
+	ColliderType getType() { return circle; }
+};
+
+class CBoundingBox : public CCollider
+{
+public:
+	Vector2<float> size;
+	Vector2<float> halfSize;
+
+	CBoundingBox() = default;
+	CBoundingBox(const Vector2<float>& size)
+		:size(size), halfSize(size / 2)
+	{
+	}
+
+	// Inherited via CCollider
+	ColliderType getType() { return boundingBox; }
 };
 
 class CInput : public Component
