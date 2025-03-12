@@ -18,5 +18,6 @@ public:
 	std::shared_ptr<Entity> addEntity(EntityTag tag);
 	const EntityVector& getEntities();
 	const EntityVector& getEntities(EntityTag tag);
+	bool hasPlayer();
 };
 

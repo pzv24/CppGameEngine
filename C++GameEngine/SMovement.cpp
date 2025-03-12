@@ -3,16 +3,19 @@
 void SMovement::update(EntityManager& entityManager, sf::RenderWindow& window)
 {
 	//for entities with input (player) apply their input to their speed variable
-	CInput& playerInput = entityManager.getEntities(EntityTag::player).front()->getComponent<CInput>();
-	CRigidbody& playerRB = entityManager.getEntities(EntityTag::player).front()->getComponent<CRigidbody>();
-	Vector2<float> inputVector{};
-	if (playerInput.down) inputVector.y += +1.0f;
-	if (playerInput.up) inputVector.y += -1.0f;
-	if (playerInput.left) inputVector.x += -1.0f;
-	if (playerInput.right) inputVector.x += 1.0f;
-	inputVector = inputVector.normalized();
-	inputVector *= 5;
-	playerRB.velocity = inputVector;
+	if (entityManager.hasPlayer())
+	{
+		CInput& playerInput = entityManager.getEntities(EntityTag::player).front()->getComponent<CInput>();
+		CRigidbody& playerRB = entityManager.getEntities(EntityTag::player).front()->getComponent<CRigidbody>();
+		Vector2<float> inputVector{};
+		if (playerInput.down) inputVector.y += +1.0f;
+		if (playerInput.up) inputVector.y += -1.0f;
+		if (playerInput.left) inputVector.x += -1.0f;
+		if (playerInput.right) inputVector.x += 1.0f;
+		inputVector = inputVector.normalized();
+		inputVector *= 5;
+		playerRB.velocity = inputVector;
+	}
 
 	//for all entities
 	for (auto& e : entityManager.getEntities())

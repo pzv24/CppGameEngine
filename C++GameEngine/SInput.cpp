@@ -4,6 +4,8 @@
 // TODO: make this generic and add a layer of action mapping
 void SInput::update(EntityManager& entityManager, const sf::Event& event)
 {
+	if (!entityManager.hasPlayer()) return;
+
 	CInput& playerInput = entityManager.getEntities(EntityTag::player).front()->getComponent<CInput>();
 
 	if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())

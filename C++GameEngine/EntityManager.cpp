@@ -55,3 +55,8 @@ const EntityVector& EntityManager::getEntities(EntityTag tag)
 	}
 	return m_entityTagMap[tag];
 }
+
+bool EntityManager::hasPlayer()
+{
+	return getEntities(player).size() > 0;
+}

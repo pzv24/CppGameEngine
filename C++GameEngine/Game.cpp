@@ -98,9 +98,11 @@ void Game::run()
 
 std::shared_ptr<Entity> Game::getPlayer()
 {
+	return nullptr;
 	auto& players = m_entityManager.getEntities(EntityTag::player);
 	
-	if (players.size() > 0)
+	std::cout << "There is " << players.size() << "players";
+	if (players.size() > 1)
 	{
 		return players.front();
 	}
@@ -128,11 +130,14 @@ void Game::sDetectCollision()
 {
 	for (auto& e : m_entityManager.getEntities(enemy))
 	{
-		if (getPlayer()->getComponent<CTransform>().position.sqrdDistance(e->getComponent<CTransform>().position) <
-			(getPlayer()->getComponent<CCircleCollider>().radius + e->getComponent<CCircleCollider>().radius) *
-			(getPlayer()->getComponent<CCircleCollider>().radius + e->getComponent<CCircleCollider>().radius))
+		for (auto& p : m_entityManager.getEntities(player))
 		{
-			getPlayer()->destroyEntity();
+			if (p->getComponent<CTransform>().position.sqrdDistance(e->getComponent<CTransform>().position) <
+				(p->getComponent<CCircleCollider>().radius + e->getComponent<CCircleCollider>().radius) *
+				(p->getComponent<CCircleCollider>().radius + e->getComponent<CCircleCollider>().radius))
+			{
+				p->destroyEntity();
+			}
 		}
 	}
 }
