@@ -99,7 +99,11 @@ void Game::run()
 std::shared_ptr<Entity> Game::getPlayer()
 {
 	auto& players = m_entityManager.getEntities(EntityTag::player);
-	return players.front();
+	
+	if (players.size() > 0)
+	{
+		return players.front();
+	}
 }
 
 void Game::sRender()

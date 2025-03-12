@@ -11,7 +11,7 @@ private:
 	EntityVector m_entityAddBuffer;
 	std::map<EntityTag, EntityVector> m_entityTagMap;
 	size_t m_entitiesCreated = 0;
-
+	void RemoveInactiveFromVector(EntityVector& entities);
 public:
 	EntityManager() = default;
 	void update();

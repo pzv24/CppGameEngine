@@ -1,5 +1,6 @@
 #include "EntityManager.h"
 
+
 void EntityManager::update()
 {
 	//adding entities to the actual vectors
@@ -11,23 +12,18 @@ void EntityManager::update()
 	}
 
 	//removing inactive entities from lists
-	m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](std::shared_ptr<Entity> e) { return !e->isActive(); }), m_entities.end());
-	//for (auto it = m_entities.begin(); it != m_entities.end();)
-	//{
-	//	if (!(*it)->isActive())
-	//	{
-	//		m_entities.erase(it);
-	//		m_entityTagMap.erase((*it)->getTag());
-	//	}
-	//	else
-	//	{
-	//		++it;
-	//	}
-	//}
-	//reset the add buffer
+	RemoveInactiveFromVector(m_entities);
+	for (auto& pair : m_entityTagMap)
+	{
+		RemoveInactiveFromVector(pair.second);
+	}
 	m_entityAddBuffer.clear();
 }
 
+void EntityManager::RemoveInactiveFromVector(EntityVector& entities)
+{
+	entities.erase(std::remove_if(entities.begin(), entities.end(), [](std::shared_ptr<Entity> e) { return !e->isActive(); }), entities.end());
+}
 std::shared_ptr<Entity> EntityManager::addEntity(EntityTag tag)
 {
 	// create entity pointer
