@@ -51,6 +51,10 @@ struct Vector2
 	{
 		return (float)sqrt((x * x) + (y * y));
 	}
+	float magnitudeSqrd() const
+	{
+		return (x * x) + (y * y);
+	}
 	float dot(const Vector2& other) const
 	{
 		return (x * other.x + y * other.y);
@@ -61,6 +65,11 @@ struct Vector2
 	{
 		x += other.x;
 		y += other.y;
+	}
+	void operator -= (const Vector2& other)
+	{
+		x -= other.x;
+		y -= other.y;
 	}
 	void operator *= (const T val)
 	{
@@ -96,7 +105,7 @@ struct Vector2
 		float yDif = other.y - y;
 		return sqrt((xDif * xDif) + (yDif * yDif));
 	}
-	float sqrdDistance(const Vector2& other) const
+	float distanceSqrd(const Vector2& other) const
 	{
 		float xDif = other.x - x;
 		float yDif = other.y - y;

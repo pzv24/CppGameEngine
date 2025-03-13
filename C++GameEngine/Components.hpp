@@ -26,10 +26,14 @@ public:
 	Vector2<float> velocity = { 0.0f, 0.0f };
 	float bounceCoef = 0.0f;
 	float mass = 1.0f;
+	float inv_mass=1.0f; 
 
 	CRigidbody() = default;
 	CRigidbody(const Vector2<float>& vel, float bounce, float mass)
-		: velocity(vel), bounceCoef(bounce), mass(mass){}
+		: velocity(vel), bounceCoef(bounce), mass(mass)
+	{
+		inv_mass = 1.0f / mass;
+	}
 
 	float Speed() { return velocity.magnitude(); }
 };

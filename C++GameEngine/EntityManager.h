@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.hpp"
 #include <map>
+#include "CollisionData.hpp"
 
 using EntityVector = std::vector<std::shared_ptr<Entity>>;
 

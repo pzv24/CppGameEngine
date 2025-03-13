@@ -11,9 +11,10 @@ struct CollisionInfo
 class Physics
 {
 public:
-	bool collisionCirToCir(std::shared_ptr<Entity> A, std::shared_ptr<Entity> B);
-	bool collisionCirToBox(std::shared_ptr<Entity> A, std::shared_ptr<Entity> B);
-	bool collisionBoxToBox(std::shared_ptr<Entity> A, std::shared_ptr<Entity> B);
-	bool isColliding(std::shared_ptr<Entity> A, std::shared_ptr<Entity> B);
+	bool collisionCirToCir(CollisionData& collision);
+	bool collisionCirToBox(CollisionData& collision);
+	bool collisionBoxToBox(CollisionData& collision);
+	bool isColliding(CollisionData& collision);
+	void resolveCollision(CollisionData& collision);
 };
 

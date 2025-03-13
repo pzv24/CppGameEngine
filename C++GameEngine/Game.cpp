@@ -31,10 +31,10 @@ void Game::spawnPlayer()
 	entity->addComponent<CTransform>(Vector2(50.0f, 50.0f), 0.0f, Vector2(1.0f, 1.0f));
 	entity->addComponent<CRigidbody>();
 
-	entity->addComponent<CRectangle>((CRectangle(Vector2{ 15.0f,15.0f }, sf::Color(120, 50, 255), sf::Color(255, 255, 255), 1.0f)));
-	entity->addComponent<CBoxCollider>((Vector2{ 15.0f,15.0f }));
-	//entity->addComponent<CCircle>(CCircle(15.0f, 32, sf::Color(120,50,255), sf::Color(255,255,255), 1.0f));
-	//entity->addComponent<CCircleCollider>(15.0f);
+	//entity->addComponent<CRectangle>((CRectangle(Vector2{ 15.0f,15.0f }, sf::Color(120, 50, 255), sf::Color(255, 255, 255), 1.0f)));
+	//entity->addComponent<CBoxCollider>((Vector2{ 15.0f,15.0f }));
+	entity->addComponent<CCircle>(CCircle(15.0f, 32, sf::Color(120,50,255), sf::Color(255,255,255), 1.0f));
+	entity->addComponent<CCircleCollider>(15.0f);
 
 	entity->getComponent<CInput>();
 }
@@ -44,18 +44,18 @@ void Game::spawnEnemy()
 	auto entity = m_entityManager.addEntity(enemy);
 	float randomAngle = randomRangeInt(0, 360);
 	randomAngle = randomAngle * 3.141692 / 180;
-	float randomSpeed = randomRangeFloat(3.0f, 25.0f);
+	float randomSpeed = randomRangeFloat(3.0f, 15.0f);
 	Vector2<float> randomVel(cos(randomAngle) * randomSpeed, sin(randomAngle) * randomSpeed);
 	Vector2<float> randomPos(randomRangeInt(15, m_wWidth - 15), randomRangeInt(15, m_wHeight - 15));
 	sf::Color randomColor(randomRangeInt(0, 255), randomRangeInt(0, 255), randomRangeInt(0, 255));
 
 	entity->addComponent<CTransform>(randomPos, 0.0f, Vector2(1.0f, 1.0f));
-	entity->addComponent<CRigidbody>().velocity = randomVel;
+	entity->addComponent<CRigidbody>(randomVel,0.0f, 3.0f);
 
-	entity->addComponent<CRectangle>((CRectangle(Vector2{15.0f,20.0f}, randomColor, sf::Color(255, 255, 255), 1.0f)));
-	entity->addComponent<CBoxCollider>((Vector2{ 15.0f,20.0f }));
-	//entity->addComponent<CCircle>(CCircle(15.0f, 6, randomColor, sf::Color(255, 255, 255), 1.0f));
-	//entity->addComponent<CCircleCollider>(15.0f);
+	//entity->addComponent<CRectangle>((CRectangle(Vector2{15.0f,20.0f}, randomColor, sf::Color(255, 255, 255), 1.0f)));
+	//entity->addComponent<CBoxCollider>((Vector2{ 15.0f,20.0f }));
+	entity->addComponent<CCircle>(CCircle(25.0f, 32, randomColor, sf::Color(255, 255, 255), 1.0f));
+	entity->addComponent<CCircleCollider>(25.0f);
 }
 
 void Game::run()
@@ -144,13 +144,21 @@ void Game::sDetectCollision()
 	{
 		for (auto& p : m_entityManager.getEntities(player))
 		{
-			if (m_physics.collisionCirToCir(p,e))
+			CollisionData c(p, e);
+			if (m_physics.collisionCirToCir(c))
 			{
-				p->destroyEntity();
+				m_physics.resolveCollision(c);
 			}
-			if (m_physics.collisionBoxToBox(p, e))
+		}
+	}
+	for (auto& a : m_entityManager.getEntities(enemy))
+	{
+		for (auto& b : m_entityManager.getEntities(enemy))
+		{
+			CollisionData c(a, b);
+			if (m_physics.collisionCirToCir(c))
 			{
-				p->destroyEntity();
+				m_physics.resolveCollision(c);
 			}
 		}
 	}

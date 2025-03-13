@@ -162,6 +162,7 @@
     <ClCompile Include="TestScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionData.hpp" />
     <ClInclude Include="Components.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="EntityManager.h" />

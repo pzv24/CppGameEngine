@@ -74,7 +74,7 @@ void TestScreen::RunTest()
     std::cout << vec1.magnitude() << '\n';
     std::cout << vec1.normalized() << '\n';
     std::cout << vec1.distance(vec2) << '\n';
-    std::cout << vec1.sqrdDistance(vec2) << '\n';
+    std::cout << vec1.distanceSqrd(vec2) << '\n';
     Vector2 scaled(vec1.normalized());
     std::cout << scaled;
     std::cout << scaled.magnitude();
