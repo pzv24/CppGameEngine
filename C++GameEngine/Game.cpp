@@ -30,8 +30,12 @@ void Game::spawnPlayer()
 
 	entity->addComponent<CTransform>(Vector2(50.0f, 50.0f), 0.0f, Vector2(1.0f, 1.0f));
 	entity->addComponent<CRigidbody>();
-	entity->addComponent<CCircle>(CCircle(15.0f, 32, sf::Color(120,50,255), sf::Color(255,255,255), 1.0f));
-	entity->addComponent<CCircleCollider>(15.0f);
+
+	entity->addComponent<CRectangle>((CRectangle(Vector2{ 15.0f,15.0f }, sf::Color(120, 50, 255), sf::Color(255, 255, 255), 1.0f)));
+	entity->addComponent<CBoxCollider>((Vector2{ 15.0f,15.0f }));
+	//entity->addComponent<CCircle>(CCircle(15.0f, 32, sf::Color(120,50,255), sf::Color(255,255,255), 1.0f));
+	//entity->addComponent<CCircleCollider>(15.0f);
+
 	entity->getComponent<CInput>();
 }
 
@@ -47,8 +51,11 @@ void Game::spawnEnemy()
 
 	entity->addComponent<CTransform>(randomPos, 0.0f, Vector2(1.0f, 1.0f));
 	entity->addComponent<CRigidbody>().velocity = randomVel;
-	entity->addComponent<CCircle>(CCircle(15.0f, 6, randomColor, sf::Color(255, 255, 255), 1.0f));
-	entity->addComponent<CCircleCollider>(15.0f);
+
+	entity->addComponent<CRectangle>((CRectangle(Vector2{15.0f,20.0f}, randomColor, sf::Color(255, 255, 255), 1.0f)));
+	entity->addComponent<CBoxCollider>((Vector2{ 15.0f,20.0f }));
+	//entity->addComponent<CCircle>(CCircle(15.0f, 6, randomColor, sf::Color(255, 255, 255), 1.0f));
+	//entity->addComponent<CCircleCollider>(15.0f);
 }
 
 void Game::run()
@@ -119,6 +126,11 @@ void Game::sRender()
 			e->getComponent<CCircle>().circle.setPosition(e->getComponent<CTransform>().position);
 			m_gameWindow.draw(e->getComponent<CCircle>().circle);
 		}
+		if (e->hasComponent<CRectangle>())
+		{
+			e->getComponent<CRectangle>().rectangle.setPosition(e->getComponent<CTransform>().position);
+			m_gameWindow.draw(e->getComponent<CRectangle>().rectangle);
+		}
 	}
 
 	ImGui::SFML::Render(m_gameWindow);
@@ -132,9 +144,11 @@ void Game::sDetectCollision()
 	{
 		for (auto& p : m_entityManager.getEntities(player))
 		{
-			if (p->getComponent<CTransform>().position.sqrdDistance(e->getComponent<CTransform>().position) <
-				(p->getComponent<CCircleCollider>().radius + e->getComponent<CCircleCollider>().radius) *
-				(p->getComponent<CCircleCollider>().radius + e->getComponent<CCircleCollider>().radius))
+			if (m_physics.collisionCirToCir(p,e))
+			{
+				p->destroyEntity();
+			}
+			if (m_physics.collisionBoxToBox(p, e))
 			{
 				p->destroyEntity();
 			}

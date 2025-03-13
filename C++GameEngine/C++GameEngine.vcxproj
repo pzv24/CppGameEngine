@@ -156,6 +156,7 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="SInput.cpp" />
     <ClCompile Include="SMovement.cpp" />
     <ClCompile Include="TestScreen.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="SInput.h" />
     <ClInclude Include="SMovement.h" />
     <ClInclude Include="TestScreen.h" />

@@ -8,11 +8,6 @@ public:
 	bool exists = false;
 };
 
-enum ColliderType
-{
-	circle,
-	boundingBox,
-};
 class CTransform : public Component
 {
 public:
@@ -56,15 +51,25 @@ public:
 	}
 };
 
-
-
-class CCollider : public Component
+//sfml circle component
+class CRectangle : public Component
 {
 public:
-	virtual ColliderType getType() = 0;
+	sf::RectangleShape rectangle;
+
+	CRectangle() = default;
+	CRectangle(const Vector2<float>& size, const sf::Color& fill, const sf::Color& outline, float thickness)
+		:rectangle(sf::Vector2<float>({size.x,size.y}))
+	{
+		rectangle.setFillColor(fill);
+		rectangle.setOutlineColor(fill);
+		rectangle.setOutlineThickness(thickness);
+		rectangle.setOrigin({size.x/2, size.y/2});
+	}
 };
 
-class CCircleCollider : public CCollider
+
+class CCircleCollider : public Component
 {
 public:
 	float radius = 0;
@@ -72,25 +77,19 @@ public:
 	CCircleCollider() = default;
 	CCircleCollider(float r)
 		:radius(r){}
-
-	// Inherited via CCollider
-	ColliderType getType() { return circle; }
 };
 
-class CBoundingBox : public CCollider
+class CBoxCollider : public Component
 {
 public:
-	Vector2<float> size;
-	Vector2<float> halfSize;
+	Vector2<float> size = { 0.0f, 0.0f };
+	Vector2<float> halfSize = { 0.0f, 0.0f };
 
-	CBoundingBox() = default;
-	CBoundingBox(const Vector2<float>& size)
+	CBoxCollider() = default;
+	CBoxCollider(const Vector2<float>& size)
 		:size(size), halfSize(size / 2)
 	{
 	}
-
-	// Inherited via CCollider
-	ColliderType getType() { return boundingBox; }
 };
 
 class CInput : public Component

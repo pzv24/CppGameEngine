@@ -10,7 +10,9 @@ using ComponentTuple = std::tuple<
 	CRigidbody,
 	CCircle,
 	CCircleCollider,
-	CInput
+	CBoxCollider,
+	CInput,
+	CRectangle
 >;
 
 enum EntityTag

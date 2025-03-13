@@ -11,6 +11,7 @@
 #include"EntityManager.h"
 #include "SInput.h"
 #include "SMovement.h"
+#include "Physics.h"
 #include <math.h>
 
 class Game
@@ -30,6 +31,7 @@ class Game
 	//systems
 	SInput m_sInput;
 	SMovement m_sMovement;
+	Physics m_physics;
 
 	void init(const std::string& configPath);
 	void setPaused(bool paused);
