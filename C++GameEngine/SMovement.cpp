@@ -57,6 +57,17 @@ void SMovement::update(EntityManager& entityManager, sf::RenderWindow& window)
 				{
 					rb.velocity.y *= -1;
 				}
+				CBoxCollider& rectCollider = e->getComponent<CBoxCollider>();
+				if (transform.position.x + rectCollider.halfSize.x > window.getSize().x ||
+					transform.position.x < rectCollider.halfSize.x)
+				{
+					rb.velocity.x *= -1;
+				}
+				if (transform.position.y + rectCollider.halfSize.y > window.getSize().y ||
+					transform.position.y < rectCollider.halfSize.y)
+				{
+					rb.velocity.y *= -1;
+				}
 			}
 		}
 	}

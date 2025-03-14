@@ -37,7 +37,8 @@ class Game
 	void init(const std::string& configPath);
 	void setPaused(bool paused);
 	void spawnPlayer();
-	void spawnEnemy();
+	void spawnEnemyRect();
+	void spawnEnemyCirc();
 
 	std::shared_ptr<Entity> getPlayer();
 	void sRender();

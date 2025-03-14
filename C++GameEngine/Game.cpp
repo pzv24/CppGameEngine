@@ -39,7 +39,7 @@ void Game::spawnPlayer()
 	entity->getComponent<CInput>();
 }
 
-void Game::spawnEnemy()
+void Game::spawnEnemyRect()
 {
 	auto entity = m_entityManager.addEntity(enemy);
 	float randomAngle = randomRangeInt(0, 360);
@@ -54,8 +54,23 @@ void Game::spawnEnemy()
 
 	entity->addComponent<CRectangle>((CRectangle(Vector2{80.0f,80.0f}, randomColor, sf::Color(255, 255, 255), 1.0f)));
 	entity->addComponent<CBoxCollider>((Vector2{ 80.0f,80.0f }));
-	//entity->addComponent<CCircle>(CCircle(25.0f, 32, randomColor, sf::Color(255, 255, 255), 1.0f));
-	//entity->addComponent<CCircleCollider>(25.0f);
+}
+
+void Game::spawnEnemyCirc()
+{
+	auto entity = m_entityManager.addEntity(enemy);
+	float randomAngle = randomRangeInt(0, 360);
+	randomAngle = randomAngle * 3.141692 / 180;
+	float randomSpeed = randomRangeFloat(3.0f, 8.0f);
+	Vector2<float> randomVel(cos(randomAngle) * randomSpeed, sin(randomAngle) * randomSpeed);
+	Vector2<float> randomPos(randomRangeInt(15, m_wWidth - 15), randomRangeInt(15, m_wHeight - 15));
+	sf::Color randomColor(randomRangeInt(0, 255), randomRangeInt(0, 255), randomRangeInt(0, 255));
+
+	entity->addComponent<CTransform>(randomPos, 0.0f, Vector2(1.0f, 1.0f));
+	entity->addComponent<CRigidbody>(randomVel, 0.0f, 4.0f);
+
+	entity->addComponent<CCircle>(CCircle(25.0f, 32, randomColor, sf::Color(255, 255, 255), 1.0f));
+	entity->addComponent<CCircleCollider>(25.0f);
 }
 
 void Game::run()
@@ -149,48 +164,15 @@ void Game::sRender()
 void Game::sDetectCollision()
 {
 	m_collisions.clear();
-	//for (auto& e : m_entityManager.getEntities(enemy))
-	//{
-	//	for (auto& p : m_entityManager.getEntities(player))
-	//	{
-	//		CollisionData c(p, e);
-	//		if (m_physics.collisionCirToCir(c))
-	//		{
-	//			m_physics.resolveCollision(c);
-	//		}
-	//	}
-	//}
-	//for (auto& a : m_entityManager.getEntities(enemy))
-	//{
-	//	for (auto& b : m_entityManager.getEntities(enemy))
-	//	{
-	//		CollisionData c(a, b);
-	//		if (m_physics.collisionCirToCir(c))
-	//		{
-	//			m_physics.resolveCollision(c);
-	//		}
-	//	}
-	//}
-	//for (auto& e : m_entityManager.getEntities(enemy))
-	//{
-	//	for (auto& p : m_entityManager.getEntities(player))
-	//	{
-	//		CollisionData c(p, e);
-	//		if (m_physics.collisionBoxToBox(c))
-	//		{
-	//			m_physics.resolveCollision(c);
-	//		}
-	//	}
-	//}
 	for (auto& a : m_entityManager.getEntities(enemy))
 	{
 		for (auto& b : m_entityManager.getEntities(enemy))
 		{
 			CollisionData c(a, b);
-			if (m_physics.collisionBoxToBox(c))
+			if (m_physics.isColliding(c))
 			{
 				m_collisions.emplace_back(c);
-				std::cout << "Frame no. " << m_currentFrame << "Collission between entity ID : " << a->getId() << " and ID : " << b->getId() << std::endl;
+				//std::cout << "Frame no. " << m_currentFrame << "Collission between entity ID : " << a->getId() << " and ID : " << b->getId() << std::endl;
 			}
 		}
 	}
@@ -206,11 +188,14 @@ void Game::drawImGui()
 	{
 		if (ImGui::BeginTabItem("Home"))
 		{
-			if (ImGui::Button("Spawn Enemy"))
+			if (ImGui::Button("Spawn Enemy Rectangle"))
 			{
-				spawnEnemy();
+				spawnEnemyRect();
 			}
-			ImGui::SameLine();
+			if (ImGui::Button("Spawn Enemy Circle"))
+			{
+				spawnEnemyCirc();
+			}
 			if (ImGui::Button("Pasue"))
 			{
 				setPaused(!m_paused);

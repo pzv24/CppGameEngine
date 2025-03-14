@@ -14,6 +14,7 @@ public:
 	bool collisionCirToCir(CollisionData& collision);
 	bool collisionCirToBox(CollisionData& collision);
 	bool collisionBoxToBox(CollisionData& collision);
+	bool collisionBoxToCir(CollisionData& collision);
 	bool isColliding(CollisionData& collision);
 	void resolveCollision(CollisionData& collision);
 	void bruteForceCorrection(CollisionData& collision);

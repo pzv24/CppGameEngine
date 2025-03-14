@@ -35,15 +35,6 @@ bool Physics::collisionCirToCir(CollisionData& collision)
 	return true;
 }
 
-bool Physics::collisionCirToBox(CollisionData& collision)
-{
-	std::shared_ptr<Entity> cirEnt = collision.A;
-	std::shared_ptr<Entity> boxEnt = collision.B;
-	//if A does not have Circle Collider, or B does not have circle collider, or A and B are the same entity, return false
-	if (!cirEnt ->hasComponent<CCircleCollider>() || !boxEnt->hasComponent<CBoxCollider>() || cirEnt == boxEnt) return false;
-
-	return false;
-}
 
 bool Physics::collisionBoxToBox(CollisionData& collision)
 {
@@ -62,7 +53,7 @@ bool Physics::collisionBoxToBox(CollisionData& collision)
 	Vector2<float> collisionNormal = Bpos - Apos;
 
 	Vector2<float> overlapBox = { ((Abox.halfSize.x + Bbox.halfSize.x) - abs(collisionNormal.x)),
-								  ((Abox.halfSize.y + Bbox.halfSize.y) - abs(collisionNormal.y))};
+								  ((Abox.halfSize.y + Bbox.halfSize.y) - abs(collisionNormal.y)) };
 
 	// if either the "width" or "height" of the overlap box is negative, there is no collision
 	if (overlapBox.x < 0 || overlapBox.y < 0) return false;
@@ -97,8 +88,50 @@ bool Physics::collisionBoxToBox(CollisionData& collision)
 	return true;
 }
 
+bool Physics::collisionCirToBox(CollisionData& collision)
+{
+	std::shared_ptr<Entity> cirEnt = collision.A;
+	std::shared_ptr<Entity> boxEnt = collision.B;
+	//if A does not have Circle Collider, or B does not have circle collider, or A and B are the same entity, return false
+	if (!cirEnt ->hasComponent<CCircleCollider>() || !boxEnt->hasComponent<CBoxCollider>() || cirEnt == boxEnt) return false;
+
+	return false;
+}
+bool Physics::collisionBoxToCir(CollisionData& collision)
+{
+	std::shared_ptr<Entity> boxEnt = collision.A;
+	std::shared_ptr<Entity> cirEnt = collision.B;
+	return false;
+}
+
+
 bool Physics::isColliding(CollisionData& collision)
 {
+	if (collision.A->getId() == collision.B->getId()) return false;
+
+	if (collision.A->hasComponent<CCircleCollider>())
+	{
+		if (collision.B->hasComponent<CCircleCollider>())
+		{
+			return collisionCirToCir(collision);
+		}
+		else if(collision.B->hasComponent<CBoxCollider>())
+		{
+			return collisionCirToBox(collision);
+		}
+	}
+	else if (collision.A->hasComponent<CBoxCollider>())
+	{
+		if (collision.B->hasComponent<CBoxCollider>())
+		{
+			return collisionBoxToBox(collision);
+		}
+		else if (collision.B->hasComponent<CCircleCollider>())
+		{
+			return collisionBoxToCir(collision);
+		}
+	}
+
 	return false;
 }
 
@@ -116,7 +149,9 @@ void Physics::resolveCollision(CollisionData& collision)
 
 	// meaning, if objects are moving away from each other (so there is no force applied on the collision normal) return;
 	if (speedOnNormal >= 0) return;
-	std::cout << "Applying force for collission between entity ID : " << collision.A->getId() << " and ID : " << collision.B->getId() << std::endl;
+
+	//std::cout << "Applying force for collission between entity ID : " << collision.A->getId() << " and ID : " << collision.B->getId() << std::endl;
+	
 	//get the smaller bounceCoef of the two Rb
 	float bounceCoefMin = std::min(ARb.bounceCoef, BRb.bounceCoef);
 
