@@ -29,12 +29,12 @@ void Game::spawnPlayer()
 	auto entity = m_entityManager.addEntity(player);
 
 	entity->addComponent<CTransform>(Vector2(50.0f, 50.0f), 0.0f, Vector2(1.0f, 1.0f));
-	entity->addComponent<CRigidbody>();
+	entity->addComponent<CRigidbody>(Vector2{0.0f,0.0f}, 0.0f, 10.0f);
 
-	//entity->addComponent<CRectangle>((CRectangle(Vector2{ 15.0f,15.0f }, sf::Color(120, 50, 255), sf::Color(255, 255, 255), 1.0f)));
-	//entity->addComponent<CBoxCollider>((Vector2{ 15.0f,15.0f }));
-	entity->addComponent<CCircle>(CCircle(15.0f, 32, sf::Color(120,50,255), sf::Color(255,255,255), 1.0f));
-	entity->addComponent<CCircleCollider>(15.0f);
+	entity->addComponent<CRectangle>((CRectangle(Vector2{ 30.0f,30.0f }, sf::Color(120, 50, 255), sf::Color(255, 255, 255), 1.0f)));
+	entity->addComponent<CBoxCollider>((Vector2{ 30.0f,30.0f }));
+	//entity->addComponent<CCircle>(CCircle(15.0f, 32, sf::Color(120,50,255), sf::Color(255,255,255), 1.0f));
+	//entity->addComponent<CCircleCollider>(15.0f);
 
 	entity->getComponent<CInput>();
 }
@@ -44,18 +44,18 @@ void Game::spawnEnemy()
 	auto entity = m_entityManager.addEntity(enemy);
 	float randomAngle = randomRangeInt(0, 360);
 	randomAngle = randomAngle * 3.141692 / 180;
-	float randomSpeed = randomRangeFloat(3.0f, 15.0f);
+	float randomSpeed = randomRangeFloat(3.0f, 8.0f);
 	Vector2<float> randomVel(cos(randomAngle) * randomSpeed, sin(randomAngle) * randomSpeed);
 	Vector2<float> randomPos(randomRangeInt(15, m_wWidth - 15), randomRangeInt(15, m_wHeight - 15));
 	sf::Color randomColor(randomRangeInt(0, 255), randomRangeInt(0, 255), randomRangeInt(0, 255));
 
 	entity->addComponent<CTransform>(randomPos, 0.0f, Vector2(1.0f, 1.0f));
-	entity->addComponent<CRigidbody>(randomVel,0.0f, 3.0f);
+	entity->addComponent<CRigidbody>(randomVel,0.0f, 4.0f);
 
-	//entity->addComponent<CRectangle>((CRectangle(Vector2{15.0f,20.0f}, randomColor, sf::Color(255, 255, 255), 1.0f)));
-	//entity->addComponent<CBoxCollider>((Vector2{ 15.0f,20.0f }));
-	entity->addComponent<CCircle>(CCircle(25.0f, 32, randomColor, sf::Color(255, 255, 255), 1.0f));
-	entity->addComponent<CCircleCollider>(25.0f);
+	entity->addComponent<CRectangle>((CRectangle(Vector2{80.0f,80.0f}, randomColor, sf::Color(255, 255, 255), 1.0f)));
+	entity->addComponent<CBoxCollider>((Vector2{ 80.0f,80.0f }));
+	//entity->addComponent<CCircle>(CCircle(25.0f, 32, randomColor, sf::Color(255, 255, 255), 1.0f));
+	//entity->addComponent<CCircleCollider>(25.0f);
 }
 
 void Game::run()
@@ -96,6 +96,14 @@ void Game::run()
 		{
 			m_sMovement.update(m_entityManager, m_gameWindow);
 			sDetectCollision();
+			for (auto& c : m_collisions)
+			{
+				m_physics.resolveCollision(c);
+			}
+			for (auto& c : m_collisions)
+			{
+				m_physics.bruteForceCorrection(c);
+			}
 			m_currentFrame++;
 		}
 		drawImGui();
@@ -140,25 +148,49 @@ void Game::sRender()
 
 void Game::sDetectCollision()
 {
-	for (auto& e : m_entityManager.getEntities(enemy))
-	{
-		for (auto& p : m_entityManager.getEntities(player))
-		{
-			CollisionData c(p, e);
-			if (m_physics.collisionCirToCir(c))
-			{
-				m_physics.resolveCollision(c);
-			}
-		}
-	}
+	m_collisions.clear();
+	//for (auto& e : m_entityManager.getEntities(enemy))
+	//{
+	//	for (auto& p : m_entityManager.getEntities(player))
+	//	{
+	//		CollisionData c(p, e);
+	//		if (m_physics.collisionCirToCir(c))
+	//		{
+	//			m_physics.resolveCollision(c);
+	//		}
+	//	}
+	//}
+	//for (auto& a : m_entityManager.getEntities(enemy))
+	//{
+	//	for (auto& b : m_entityManager.getEntities(enemy))
+	//	{
+	//		CollisionData c(a, b);
+	//		if (m_physics.collisionCirToCir(c))
+	//		{
+	//			m_physics.resolveCollision(c);
+	//		}
+	//	}
+	//}
+	//for (auto& e : m_entityManager.getEntities(enemy))
+	//{
+	//	for (auto& p : m_entityManager.getEntities(player))
+	//	{
+	//		CollisionData c(p, e);
+	//		if (m_physics.collisionBoxToBox(c))
+	//		{
+	//			m_physics.resolveCollision(c);
+	//		}
+	//	}
+	//}
 	for (auto& a : m_entityManager.getEntities(enemy))
 	{
 		for (auto& b : m_entityManager.getEntities(enemy))
 		{
 			CollisionData c(a, b);
-			if (m_physics.collisionCirToCir(c))
+			if (m_physics.collisionBoxToBox(c))
 			{
-				m_physics.resolveCollision(c);
+				m_collisions.emplace_back(c);
+				std::cout << "Frame no. " << m_currentFrame << "Collission between entity ID : " << a->getId() << " and ID : " << b->getId() << std::endl;
 			}
 		}
 	}

@@ -32,7 +32,16 @@ public:
 	CRigidbody(const Vector2<float>& vel, float bounce, float mass)
 		: velocity(vel), bounceCoef(bounce), mass(mass)
 	{
-		inv_mass = 1.0f / mass;
+		// coonsidering we'll use 0 mass as infinite mass object
+		if (mass <= 0.01f)
+		{
+			mass = 0.0f;
+			inv_mass = 0.0f;
+		}
+		else
+		{
+			inv_mass = 1.0f / mass;
+		}
 	}
 
 	float Speed() { return velocity.magnitude(); }

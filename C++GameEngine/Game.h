@@ -27,6 +27,7 @@ class Game
 	bool m_isRunning;
 	int m_wWidth = 1280;
 	int m_wHeight = 720;
+	std::vector<CollisionData> m_collisions;
 
 	//systems
 	SInput m_sInput;

@@ -16,5 +16,6 @@ public:
 	bool collisionBoxToBox(CollisionData& collision);
 	bool isColliding(CollisionData& collision);
 	void resolveCollision(CollisionData& collision);
+	void bruteForceCorrection(CollisionData& collision);
 };
 
