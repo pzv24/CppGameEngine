@@ -90,6 +90,7 @@ bool Physics::collisionBoxToBox(CollisionData& collision)
 
 bool Physics::collisionCirToBox(CollisionData& collision)
 {
+	// just flip the A and B entities to match the expected component order
 	std::shared_ptr<Entity> A = collision.A;
 	collision.A = collision.B;
 	collision.B = A;
@@ -108,11 +109,7 @@ bool Physics::collisionBoxToCir(CollisionData& collision)
 	Vector2<float> Bpos = B->getComponent<CTransform>().position;
 
 	//if A does not have Circle Collider, or B does not have circle collider, or A and B are the same entity, return false
-	if (!A->hasComponent<CBoxCollider>() || !B->hasComponent<CCircleCollider>() || A == B)
-	{
-		std::cout << "wroing object composition";
-		return false;
-	}
+	if (!A->hasComponent<CBoxCollider>() || !B->hasComponent<CCircleCollider>() || A == B) return false;
 
 	//from the center of the box to the center of the circle
 	Vector2<float> posNormal = Bpos - Apos;
@@ -156,17 +153,13 @@ bool Physics::collisionBoxToCir(CollisionData& collision)
 		//there is collision!
 		//now we get the actual magnitude (not squared) of the collision normal
 		collision.penDist = Bcirc.radius - collisionNormal.magnitude();
-		if (!isInside)
-		{
-			collision.normal = collisionNormal.normalized();
-		}
-		else
-		{
-			collision.normal = collisionNormal.normalized() * -1;
-		}
+
+		// if the circle is inside the box, invert the direction of the normal so that it faces outwards FROM the box
+		collision.normal = isInside ? collisionNormal.normalized() * -1 : collisionNormal.normalized();
 		return true;
 	}
-	return false;
+	// if no collision is detected, return  false
+	else return false;
 }
 
 
