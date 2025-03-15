@@ -90,17 +90,82 @@ bool Physics::collisionBoxToBox(CollisionData& collision)
 
 bool Physics::collisionCirToBox(CollisionData& collision)
 {
-	std::shared_ptr<Entity> cirEnt = collision.A;
-	std::shared_ptr<Entity> boxEnt = collision.B;
-	//if A does not have Circle Collider, or B does not have circle collider, or A and B are the same entity, return false
-	if (!cirEnt ->hasComponent<CCircleCollider>() || !boxEnt->hasComponent<CBoxCollider>() || cirEnt == boxEnt) return false;
-
-	return false;
+	std::shared_ptr<Entity> A = collision.A;
+	collision.A = collision.B;
+	collision.B = A;
+	return collisionBoxToCir(collision);
 }
 bool Physics::collisionBoxToCir(CollisionData& collision)
 {
-	std::shared_ptr<Entity> boxEnt = collision.A;
-	std::shared_ptr<Entity> cirEnt = collision.B;
+	// note that we consider A to be the box collider and B to be the circle collider
+	std::shared_ptr<Entity> A = collision.A;
+	std::shared_ptr<Entity> B = collision.B;
+
+	//getting components
+	CBoxCollider& Abox = A->getComponent<CBoxCollider>();
+	CCircleCollider& Bcirc = B->getComponent<CCircleCollider>();
+	Vector2<float> Apos = A->getComponent<CTransform>().position;
+	Vector2<float> Bpos = B->getComponent<CTransform>().position;
+
+	//if A does not have Circle Collider, or B does not have circle collider, or A and B are the same entity, return false
+	if (!A->hasComponent<CBoxCollider>() || !B->hasComponent<CCircleCollider>() || A == B)
+	{
+		std::cout << "wroing object composition";
+		return false;
+	}
+
+	//from the center of the box to the center of the circle
+	Vector2<float> posNormal = Bpos - Apos;
+
+	// in case circle is fully inside box. Will use to invert the collision normal at the end
+	bool isInside = false;
+
+	//clamp the normal x and y values to the limit of the bounding box
+	//this created a point on the edge of the box collider that will be taken as point of contact for the collision
+	//note: this point is in local coordenates to A
+	Vector2<float> closestPointOfContact(std::clamp(posNormal.x, -Abox.halfSize.x, Abox.halfSize.x), std::clamp(posNormal.y, -Abox.halfSize.y, Abox.halfSize.y));
+
+	//if the circle is fully inside the box
+	if (posNormal == closestPointOfContact)
+	{
+		//snap closest point of contact to nearest axis
+		//if the normal is closer to the edge of the x axis, rather than the y axis
+		if (Abox.halfSize.x - std::abs(posNormal.x) < Abox.halfSize.y - std::abs(posNormal.y))
+		{
+			// if position normal x is negative, snap to negative half size, otherwise snap to positive half size
+			// set that half box as the point in x
+			closestPointOfContact.x = posNormal.x < 0 ? -Abox.halfSize.x : Abox.halfSize.x;
+		}
+		else
+		{
+			// repeat in case of y being closer to edge
+			closestPointOfContact.y = posNormal.y < 0 ? -Abox.halfSize.y : Abox.halfSize.y;
+		}
+		isInside = true;
+	}
+
+	//create a new normal from the point of contact to the circle center
+	//this is the actual normal that we'll be using for the collision
+	Vector2<float> collisionNormal = posNormal - closestPointOfContact;
+
+	//there is a collision if: the collision normal is greater than the circle radius
+	// or if we have detected the circle to be inside the box
+
+	if (collisionNormal.magnitudeSqrd() < (Bcirc.radius * Bcirc.radius) || isInside)
+	{
+		//there is collision!
+		//now we get the actual magnitude (not squared) of the collision normal
+		collision.penDist = Bcirc.radius - collisionNormal.magnitude();
+		if (!isInside)
+		{
+			collision.normal = collisionNormal.normalized();
+		}
+		else
+		{
+			collision.normal = collisionNormal.normalized() * -1;
+		}
+		return true;
+	}
 	return false;
 }
 

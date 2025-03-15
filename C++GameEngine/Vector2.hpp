@@ -28,6 +28,11 @@ struct Vector2
 		return sf::Vector2<T>(x, y);
 	}
 
+	bool operator ==(const Vector2& other) const
+	{
+		return other.x == x && other.y == y;
+	}
+
 	//vector simple operations
 	Vector2 operator + (const Vector2& other) const
 	{
