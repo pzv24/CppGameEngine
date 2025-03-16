@@ -18,15 +18,16 @@ class Game
 {
 	EntityManager m_entityManager;
 	sf::RenderWindow m_gameWindow;
-	sf::Font m_font;
 	sf::Clock m_deltaClock;
-
+	sf::Font m_font;
 	//will be using frames as unit of measurement instead of seconds, will use fixed frame rate for now
 	int m_currentFrame = 0;
 	bool m_paused;
 	bool m_isRunning;
 	int m_wWidth = 1280;
 	int m_wHeight = 720;
+	int m_targetFPS = 60;
+	sf::Time m_elapsed = sf::seconds(0);
 	std::vector<CollisionData> m_collisions;
 
 	//systems
@@ -41,8 +42,9 @@ class Game
 	void spawnEnemyCirc();
 
 	std::shared_ptr<Entity> getPlayer();
-	void sRender();
-	void sDetectCollision();
+	void sRender(float alpha);
+	void sDetectCollision(float dt);
+	void handleInput();
 	void drawImGui();
 	int randomRangeInt(int min, int max);
 	int randomRangeFloat(float min, float max);

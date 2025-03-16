@@ -1,6 +1,6 @@
 #include "SMovement.h"
 
-void SMovement::update(EntityManager& entityManager, sf::RenderWindow& window)
+void SMovement::update(EntityManager& entityManager, sf::RenderWindow& window, float dt)
 {
 	//for entities with input (player) apply their input to their speed variable
 	if (entityManager.hasPlayer())
@@ -8,12 +8,12 @@ void SMovement::update(EntityManager& entityManager, sf::RenderWindow& window)
 		CInput& playerInput = entityManager.getEntities(EntityTag::player).front()->getComponent<CInput>();
 		CRigidbody& playerRB = entityManager.getEntities(EntityTag::player).front()->getComponent<CRigidbody>();
 		Vector2<float> inputVector{};
-		if (playerInput.down) inputVector.y += +1.0f;
+		if (playerInput.down) inputVector.y += 1.0f;
 		if (playerInput.up) inputVector.y += -1.0f;
 		if (playerInput.left) inputVector.x += -1.0f;
 		if (playerInput.right) inputVector.x += 1.0f;
 		inputVector = inputVector.normalized();
-		inputVector *= 5;
+		inputVector *= 500.0f;
 		playerRB.velocity = inputVector;
 	}
 
@@ -24,7 +24,9 @@ void SMovement::update(EntityManager& entityManager, sf::RenderWindow& window)
 		{
 			CTransform& transform = e->getComponent<CTransform>();
 			CRigidbody& rb = e->getComponent<CRigidbody>();
-			transform.position += rb.velocity;
+
+			transform.previousPosition = transform.position;
+			transform.position += rb.velocity * dt;
 
 			// if the player is going off bounds, restrain him
 			if (e->getTag() == player)
@@ -33,15 +35,16 @@ void SMovement::update(EntityManager& entityManager, sf::RenderWindow& window)
 				if (transform.position.x + collider.radius > window.getSize().x ||
 					transform.position.x < collider.radius)
 				{
-					transform.position.x = transform.position.x - rb.velocity.x;
+					transform.position.x = transform.position.x - rb.velocity.x * dt;
 					rb.velocity.x = 0;
 				}
 				if (transform.position.y + collider.radius > window.getSize().y ||
 					transform.position.y < collider.radius)
 				{
-					transform.position.y = transform.position.y - rb.velocity.y;
+					transform.position.y = transform.position.y - rb.velocity.y *dt;
 					rb.velocity.y = 0;
 				}
+				transform.previousPosition = transform.position;
 			}
 			// if enemies are going off bounds, bounce them
 			if (e->getTag() == enemy)

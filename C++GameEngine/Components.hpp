@@ -14,10 +14,14 @@ public:
 	Vector2<float>	position = { 0.0f, 0.0f };
 	float rotation = 0.0f;
 	Vector2<float>	scale = { 1.0f, 1.0f };
+	Vector2<float>	previousPosition = { 0.0f, 0.0f };
 
 	CTransform() = default;
 	CTransform(const Vector2<float>& pos, float angle, const Vector2<float>& scale)
-		: position(pos), rotation(angle), scale(scale) {}
+		: position(pos), rotation(angle), scale(scale)
+	{
+		previousPosition = position;
+	}
 };
 
 class CRigidbody : public Component
