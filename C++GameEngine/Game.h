@@ -28,26 +28,28 @@ class Game
 	int m_wHeight = 720;
 	int m_targetFPS = 60;
 	sf::Time m_elapsed = sf::seconds(0);
-	std::vector<CollisionData> m_collisions;
 
 	//systems
+
+	//TO BE MOVED TO SCENE
 	SInput m_sInput;
 	SMovement m_sMovement;
 	Physics m_physics;
-
-	void init(const std::string& configPath);
-	void setPaused(bool paused);
+	std::vector<CollisionData> m_collisions;
 	void spawnPlayer();
 	void spawnEnemyRect();
 	void spawnEnemyCirc();
-
 	std::shared_ptr<Entity> getPlayer();
 	void sRender(float alpha);
 	void sDetectCollision(float dt);
-	void handleInput();
 	void drawImGui();
 	int randomRangeInt(int min, int max);
 	int randomRangeFloat(float min, float max);
+
+	void init(const std::string& configPath);
+	void setPaused(bool paused);
+
+	void sGetInput();
 
 public:
 	Game(const std::string& configPath);
