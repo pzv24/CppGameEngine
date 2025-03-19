@@ -157,8 +157,11 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Scene_Base.cpp" />
+    <ClCompile Include="Scene_PhysicsGym.cpp" />
     <ClCompile Include="SInput.cpp" />
     <ClCompile Include="SMovement.cpp" />
+    <ClCompile Include="Spawner.cpp" />
     <ClCompile Include="TestScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -168,8 +171,12 @@
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Physics.h" />
+    <ClInclude Include="RandomFuncs.hpp" />
+    <ClInclude Include="Scene_Base.h" />
+    <ClInclude Include="Scene_PhysicsGym.h" />
     <ClInclude Include="SInput.h" />
     <ClInclude Include="SMovement.h" />
+    <ClInclude Include="Spawner.h" />
     <ClInclude Include="TestScreen.h" />
     <ClInclude Include="Vector2.hpp" />
   </ItemGroup>

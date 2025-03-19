@@ -28,7 +28,7 @@ public:
 	Scene_PhysicsGym(Game& game, float dt);
 	void init();
 	// Inherited via Scene_Base
-	void sRender(float alpha) override;
+	void sRender(sf::RenderWindow& window, float alpha) override;
 	void sStep() override;
 };
 

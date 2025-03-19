@@ -17,15 +17,11 @@
 class Game
 {
 	EntityManager m_entityManager;
-	sf::RenderWindow m_gameWindow;
 	sf::Clock m_deltaClock;
-	sf::Font m_font;
 	//will be using frames as unit of measurement instead of seconds, will use fixed frame rate for now
 	int m_currentFrame = 0;
 	bool m_paused;
 	bool m_isRunning;
-	int m_wWidth = 1280;
-	int m_wHeight = 720;
 	int m_targetFPS = 60;
 	sf::Time m_elapsed = sf::seconds(0);
 
@@ -52,6 +48,12 @@ class Game
 	void sGetInput();
 
 public:
+	//window variables
+	sf::RenderWindow m_gameWindow;
+	sf::Font m_font;
+	int m_wWidth = 1280;
+	int m_wHeight = 720;
+
 	Game(const std::string& configPath);
 	void run();
 };
